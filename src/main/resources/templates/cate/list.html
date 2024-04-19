@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">카테고리 등록</div>
+  <form name="frm" th:object="${cateVO}" method="post" action="/cate/list_all">
+    <div>
+
+      <input type="text" name="name" value="" placeholder="중분류 입력하세요" autofocus="autofocus"
+             class="form-control fom-control-sm" style="width: 50%;" th:field="*{name}">
+      <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+        <div th:each="err : ${#lists.sort(#fields.errors('name'))}" th:text="${err}"></div>
+      </div>
+    </div>
+    <div style="margin-top: 5px">
+
+      <input type="text" name="namesub" value="" placeholder="소분류 입력하세요"
+             class="form-control fom-control-sm" style="width: 50%;" th:field="*{namesub}">
+      <div th:if="${#fields.hasErrors('namesub')}" class="alert alert-danger" role="alert"
+           style="margin-top: 5px;">
+        <div th:each="err : ${#lists.sort(#fields.errors('namesub'))}" th:text="${err}"></div>
+      </div>
+    </div>
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+      <button type="button" onclick="location.href='./list_all'" class="btn btn-secondary btn-sm">목록</button>
+    </div>
+
+  </form>
+  <div class="title_line">카테고리</div>
+
+  <table class="table table-hover">
+    <colgroup>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+    </colgroup>
+    <thead>
+    <tr>
+      <th class="th_bs">순서</th>
+      <th class="th_bs">중분류</th>
+      <th class="th_bs">소분류</th>
+      <th class="th_bs">자료수</th>
+      <th class="th_bs">등록일</th>
+      <th class="th_bs">기타</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over your data -->
+    <tr th:each="cateVO : ${list}">
+      <td class="td_bs" th:text="${cateVO.cateno}" id="cateno"></td>
+      <td class="td_bs"><a th:href="@{|./read/${cateVO.cateno}|}" style="display: block;"
+                           th:text="${cateVO.name}"></a></td>
+
+      <td class="td_bs"><a th:href="@{|./read/${cateVO.cateno}|}" style="display: block;"
+                           th:text="${cateVO.namesub}"></a></td>
+      <td class="td_bs" th:text="${cateVO.cnt}"></td>
+      <td class="td_bs" th:text="${cateVO.rdate.substring(0,10)}"></td>
+      <td class="td_bs">
+        <img src="/images/show.png" class="icon">
+        <img src="/images/decrease.png" class="icon">
+        <img src="/images/increase.png" class="icon">
+
+        <a th:href="@{'/cate/update/' + ${cateVO.cateno}}">
+          <img src="/images/update.png" class="icon">
+        </a>
+
+        <a href="#" th:attr="onclick=|deleteCate('${cateVO.cateno}','${cateVO.name}')|">
+          <img src="/images/delete.png" class="icon">
+
+
+        </a>
+        <script>
+            function deleteCate(cateno, catename) {
+                var name = catename; // cateVO.name 값 가져오기
+
+                if (confirm(cateno + "번의 " + name + " 중분류를 삭제하시겠습니까?")) {
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cate/delete/' + cateno;
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    alert("원래 페이지로 돌아갑니다.");
+
+                }
+            }
+        </script>
+
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">카테고리 등록</div>
+  <form name="frm" th:object="${cateVO}" method="post" action="/cate/list_all">
+
+    <div th:replace="~{errors::errorsFragment}"></div>
+
+    <div>
+      <label>중분류</label>
+      <input type="text" name="name" value="" autofocus="autofocus"
+             class="form-control fom-control-sm" style="width: 50%;" th:field="*{name}">
+    </div>
+    <div>
+      <label>소분류</label>
+      <input type="text" name="namesub" value=""
+             class="form-control fom-control-sm" style="width: 50%;" th:field="*{namesub}">
+    </div>
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+      <button type="button" onclick="location.href='./list_all'" class="btn btn-secondary btn-sm">목록</button>
+    </div>
+
+  </form>
+</div>
+</html>

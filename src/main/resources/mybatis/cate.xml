@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.cate.CateDAOInter">
+
+    <!--  C - 생성   -->
+    <insert id="create" parameterType="dev.mvc.cate.CateVO">
+        INSERT INTO cate (cateno, name, namesub, cnt, rdate, seqno, visible)
+        VALUES (cate_seq.nextval, #{name}, #{namesub}, 0, sysdate, #{seqno}, 'Y')
+
+    </insert>
+
+    <!-- R - 리스트   -->
+    <select id="list" resultType="dev.mvc.cate.CateVO">
+        SELECT cateno, name, namesub, cnt, rdate, seqno, visible
+        FROM cate
+        ORDER BY seqno asc
+
+
+    </select>
+    <!-- R - 리스트 단일   -->
+    <select id="read" parameterType="Integer" resultType="dev.mvc.cate.CateVO">
+        SELECT cateno, name, namesub, cnt, rdate, seqno, visible
+        FROM cate
+        WHERE cateno = #{cateno}
+        ORDER BY cateno ASC
+
+
+    </select>
+
+
+    <!-- U - 수정-->
+    <update id="update" parameterType="dev.mvc.cate.CateVO">
+        UPDATE cate
+        SET name    = #{name},
+            namesub = #{namesub},
+            cnt     = #{cnt},
+            rdate= sysdate,
+            seqno   = #{seqno},
+            visible = #{visible}
+        WHERE cateno = #{cateno}
+
+
+    </update>
+
+
+    <!-- 우선 최고 올림-->
+    <update id="max" parameterType="Integer">
+        UPDATE cate
+        set seqno = (select min(seqno) from cate) - 1
+        where cateno = #{cateno}
+
+    </update>
+
+    <!-- 우선 최소 내림-->
+    <update id="min" parameterType="Integer">
+        UPDATE cate
+        set seqno = (select max(seqno) from cate) + 1
+        where cateno = #{cateno}
+
+
+    </update>
+
+
+    <!-- 우선 순위 하나 올림-->
+    <update id="update_backward" parameterType="Integer">
+        UPDATE cate
+        set seqno = seqno + 1
+        where cateno = #{cateno}
+
+
+    </update>
+
+    <!-- 우선 순위 하나 내림-->
+    <update id="update_forward" parameterType="Integer">
+        UPDATE cate
+        set seqno = seqno - 1
+        where cateno = #{cateno}
+
+
+    </update>
+
+
+    <!-- 숨김 처리-->
+    <update id="hide" parameterType="Integer">
+        UPDATE cate
+        set visible = 'N'
+        where cateno = #{cateno}
+
+
+    </update>
+
+
+    <!-- 공개 처리 -->
+    <update id="show" parameterType="Integer">
+        UPDATE cate
+        set visible = 'Y'
+        where cateno = #{cateno}
+
+
+    </update>
+
+
+    <!-- D - 삭제-->
+    <delete id="delete" parameterType="Integer">
+        DELETE
+        FROM cate
+        WHERE cateno = #{cateno}
+
+
+    </delete>
+
+
+    <!-- D - 다중 삭제-->
+    <delete id="multiple_delete" parameterType="java.util.List">
+        DELETE FROM cate
+        WHERE cateno IN
+        <foreach collection="list" item="cateno" open="(" separator="," close=")">
+            #{cateno}
+        </foreach>
+    </delete>
+
+
+    <!-- 회원/비회원 조회 중분류-->
+    <select id="list_all_name_y" resultType="dev.mvc.cate.CateVO">
+        SELECT cateno, name, seqno, visible
+        FROM cate
+        WHERE name IN (SELECT DISTINCT name
+                       FROM cate)
+          AND namesub = '-'
+          AND visible = 'Y'
+        ORDER BY seqno ASC
+    </select>
+
+
+
+    <select id="list_namesub_y" resultType="dev.mvc.cate.CateVO">
+        SELECT cateno, name, namesub, seqno, visible
+        FROM cate
+        WHERE name=#{name} AND namesub != '-' AND visible = 'Y'
+        ORDER BY seqno ASC
+    </select>
+
+<!--    <select id="list_search" parameterType="java.util.Map" resultType="dev.mvc.cate.CateVO">-->
+<!--        &lt;!&ndash; 중분류 조회 &ndash;&gt;-->
+<!--        <if test="type.equals('100')">-->
+<!--            SELECT cateno, name, namesub, seqno, visible,rdate-->
+<!--            FROM cate-->
+<!--            WHERE name LIKE '%' || #{name} || '%'-->
+<!--            ORDER BY seqno ASC-->
+<!--        </if>-->
+
+<!--        &lt;!&ndash; 소분류 조회 &ndash;&gt;-->
+<!--        <if test="type.equals('200')">-->
+<!--            SELECT cateno, name, namesub, seqno, visible,rdate-->
+<!--            FROM cate-->
+<!--            WHERE namesub LIKE '%' || #{name} || '%'-->
+<!--            ORDER BY seqno ASC-->
+<!--        </if>-->
+
+<!--        &lt;!&ndash; 중분류 + 소분류 조회 &ndash;&gt;-->
+<!--        <if test="type.equals('300')">-->
+<!--            SELECT cateno, name, namesub, seqno, visible,rdate-->
+<!--            FROM cate-->
+<!--            WHERE name LIKE '%' || #{name} || '%' OR namesub LIKE '%' || #{name} || '%'-->
+<!--            ORDER BY seqno ASC-->
+<!--        </if>-->
+<!--    </select>-->
+
+
+
+
+
+
+
+    <select id="list_search_paging" parameterType="java.util.Map" resultType="dev.mvc.cate.CateVO">
+        <if test="word == null or word == ''">
+            <!-- 전체 결과를 가져오는 쿼리 -->
+            SELECT cateno, name, namesub, cnt, rdate, seqno, visible, r
+            FROM (
+                SELECT cateno, name, namesub, cnt, rdate, seqno, visible, ROWNUM as r
+                FROM (
+                    SELECT cateno, name, namesub, cnt, rdate, seqno, visible
+                    FROM cate
+                    ORDER BY seqno ASC
+              )
+            )
+            WHERE r BETWEEN #{start_num} AND #{end_num}
+        </if>
+        <if test="word != null and word != ''">
+            <!-- type이 100이면 name으로 조회 -->
+            <if test="type == '100'">
+                SELECT cateno, name, namesub, seqno, visible, rdate
+                FROM (
+                    SELECT cateno, name, namesub, seqno, visible,rdate, ROWNUM as r
+                    FROM (
+                        SELECT cateno, name, namesub, seqno, visible,rdate
+                        FROM cate
+                        WHERE name LIKE '%' || #{word} || '%'
+                        ORDER BY seqno ASC
+                   )
+                )
+                WHERE r BETWEEN #{start_num} AND #{end_num}
+            </if>
+            <!-- type이 200이면 namesub으로 조회 -->
+            <if test="type == '200'">
+                SELECT cateno, name, namesub, seqno, visible, rdate
+                FROM (
+                    SELECT cateno, name, namesub, seqno, visible,rdate, ROWNUM as r
+                    FROM (
+                        SELECT cateno, name, namesub, seqno, visible,rdate
+                        FROM cate
+                        WHERE namesub LIKE '%' || #{word} || '%'
+                        ORDER BY seqno ASC
+                  )
+                )
+                WHERE r BETWEEN #{start_num} AND #{end_num}
+            </if>
+            <!-- type이 300이면 name과 namesub 모두로 조회 -->
+            <if test="type == '300'">
+                SELECT cateno, name, namesub, seqno, visible, rdate
+                FROM (
+                    SELECT cateno, name, namesub, seqno, visible,rdate, ROWNUM as r
+                    FROM (
+                        SELECT cateno, name, namesub, seqno, visible,rdate
+                        FROM cate
+                        WHERE name LIKE '%' || #{word} || '%' OR namesub LIKE '%' || #{word} || '%'
+                        ORDER BY seqno ASC
+                  )
+                )
+                WHERE r BETWEEN #{start_num} AND #{end_num}
+            </if>
+        </if>
+
+    </select>
+
+    <select id="list_search_count" parameterType="java.util.Map" resultType="int">
+        <if test="word == null or word == ''">
+            <!-- 전체 결과를 가져오는 쿼리 -->
+            SELECT count(*) as cnt
+            FROM cate
+            ORDER BY seqno ASC
+        </if>
+        <if test="word != null and word != ''">
+            <!-- type이 100이면 name으로 조회 -->
+            <if test="type == '100'">
+                SELECT count(*) as cnt
+                FROM cate
+                WHERE name LIKE '%' || #{word} || '%'
+                ORDER BY seqno ASC
+            </if>
+            <!-- type이 200이면 namesub으로 조회 -->
+            <if test="type == '200'">
+                SELECT count(*) as cnt
+                FROM cate
+                WHERE namesub LIKE '%' || #{word} || '%'
+                ORDER BY seqno ASC
+            </if>
+            <!-- type이 300이면 name과 namesub 모두로 조회 -->
+            <if test="type == '300'">
+                SELECT count(*) as cnt
+                FROM cate
+                WHERE name LIKE '%' || #{word} || '%' OR namesub LIKE '%' || #{word} || '%'
+                ORDER BY seqno ASC
+            </if>
+        </if>
+
+    </select>
+
+
+
+</mapper>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+
+  <div class="title_line">카테고리</div>
+  <aside class="aside_right">
+    <a href="javascript:location.reload();"> 새로고침</a>
+  </aside>
+
+
+  <!-- /cate/list_all_compoent.html 파일의 list_all_fragment import -->
+  <div th:replace="~{cate/list_y_component::list_y_fragment}"></div>
+</div>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div th:text="${fail}">
+
+  </div>
+  <script th:inline="javascript">
+    if ([[${error}]]) {
+      alert([[${error}]]);
+    }
+  </script>
+  <script>
+
+
+    window.onload = function () {
+
+      document.querySelector('#id').addEventListener('keypress', (event) => {
+
+        let id = document.getElementById('id').value;
+
+
+        if (id !== "" && event.key === 'Enter') {
+          document.getElementById('passwd').focus();
+        } else if (passwd === "" && event.key === 'Enter') {
+          document.getElementById('passwd').focus();
+        }
+      });
+
+      document.querySelector('#passwd').addEventListener('keypress', (event) => {
+        let passwd = document.getElementById('passwd').value.trim();
+        if (passwd !== "" && event.key === 'Enter') {
+          document.getElementById('btn_send').focus();
+        } else if (passwd === "" && event.key === 'Enter') {
+          document.getElementById('passwd').focus();
+        }
+
+      });
+
+
+    }
+
+
+    function send() { // 회원 가입 처리
+      let id = document.getElementById('id').value;
+
+      let idfocus = document.getElementById('id');
+      let id_msg = document.getElementById('id_msg');
+
+      if (id == null || id.trim() == null) {
+        alert('ID를 입력해주세요');
+        return false; // 중복 확인을 먼저 하지 않았으므로 회원 가입 진행 중지
+      }
+
+      if (id.trim().length == 0) {
+        id_msg.style.fontSize = "12px";
+        id_msg.innerHTML = 'ID가 누락되었습니다. ID 입력은 필수 입니다.';
+        id_msg.classList.add('span_warning');    // class 적용
+        idfocus.focus();
+
+        return false;  // 회원 가입 진행 중지
+
+      }
+      if (id.trim().length < 4) {
+        id_msg.innerHTML = ' ID(이메일)는 3자이상 권장합니다.';
+        id_msg.style.marginTop = "5px";
+        id_msg.classList.add('span_warning');    // class 적용
+        id.focus();
+
+        return false;  // 회원 가입 진행 중지
+      }
+
+      // 패스워드를 정상적으로 2번 입력했는지 확인
+      let passwd = document.getElementById('passwd').value;
+
+      if (passwd == null || passwd.trim() == null) {
+        alert('비밀번호를  입력해주세요');
+        return false;
+      }
+
+      if (passwd.trim().length == 0) {
+        alert('패스워드가 누락되었습니다. 패스워드는 입력은 필수 입니다.');
+        return false;
+      }
+
+
+      document.getElementById('frm').submit(); // required="required" 작동 안됨.
+    }
+  </script>
+
+  <ASIDE class="aside_right">
+    <A href="javascript:location.reload();">새로고침</A>
+    <span class='menu_divide'>│</span>
+    <A href='./create.do'>회원 가입</A>
+    <span class='menu_divide'>│</span>
+    <A href='./list.do'>목록</A>
+  </ASIDE>
+
+  <div class='menu_line'></div>
+
+  <div style="width: 60%; margin: 0px auto ">
+    <div class="title_line">회원가입 (*는 필수 )</div>
+    <form id="frm" name="frm" th:object="${memberVO}" method="post" action="/member/login">
+      <label>아이디(이메일)* </label>
+
+      <div >
+
+        <input type="text" name="id" id="id" value="" autofocus="autofocus"
+               class="form-control form-control-sm" style="width: 27%;" th:value="${ck_id}" required>
+
+        <label style="margin-top: 5px;">
+
+
+          <input type="checkbox" name="id_save" id="id_save" th:checked="${ck_id_save == 'Y'}" value="Y"/> 저장
+      </div>
+      <div th:if="${#fields.hasErrors('id')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+        <div th:each="err : ${#lists.sort(#fields.errors('id'))}" th:text="${err}"></div>
+      </div>
+
+      <span style="margin-top: 100px;" id='id_msg'></span>
+
+      <div class="form-group" style="margin-top: 10px;">
+        <label>비밀번호* </label>
+        <input type="password" name="passwd" id="passwd" value="" autofocus="autofocus"
+               class="form-control form-control-sm" style="width: 27%;" required   th:value="${ck_passwd}">
+        <label>
+
+
+          <input type="checkbox" name="passwd_save" id="passwd_save" th:checked="${ck_passwd_save == 'Y'}" value="Y"/> 저장
+           </label>
+        <div th:if="${#fields.hasErrors('passwd')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('passwd'))}" th:text="${err}"></div>
+        </div>
+
+
+      </div>
+
+
+      <div class="form-group" style="margin-top: 10px;">
+        <button type="button" class="btn btn-primary" onclick="return send()" id="btn_send">로그인</button>
+        <button type="button" class="btn btn-primary" onclick="location.href = '/';" id="btn_cancel">취소</button>
+      </div>
+
+    </form>
+  </div>
+</div>

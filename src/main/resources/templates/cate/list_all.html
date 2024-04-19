@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div style="clear: both; text-align: right">
+    <div style="display: inline-block; vertical-align: top; width: 300px; margin-right: 50px; text-align: center"
+         th:if="${searchnull != null}" class="alert alert-warning" role="alert">
+      <span th:text="${searchnull}"></span>
+    </div>
+    <div style="display: inline-block; vertical-align: top;">
+      <div th:replace="~{/cate/search_form::search_fragment}"></div>
+    </div>
+  </div>
+
+  <aside class="aside_right">
+    <a href="javascript: location.reload();">새로 고침</a>
+  </aside>
+  <div class="menu_line"></div>
+  <div style="width: 80%; margin: 0px auto;">
+    <form name="frm" th:object="${cateVO}" method="post" action="/cate/list_all">
+      <div style="margin-right: 5px; width: 30%; float:left">
+        <input type="text" name="name" value="" autofocus="autofocus"
+               class="form-control fom-control-sm" style="width: 100%;" th:field="*{name}" placeholder="중분류 입력하세요.">
+        <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('name'))}" th:text="${err}"></div>
+        </div>
+      </div>
+      <div style="margin-right: 5px; width: 30%; float:left">
+        <input type="text" name="namesub" value=""
+               class="form-control fom-control-sm" style="width: 100%;" th:field="*{namesub}"
+               placeholder="소분류 입력하세요. '-' 중분류로 등록">
+        <div th:if="${#fields.hasErrors('namesub')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('namesub'))}" th:text="${err}"></div>
+        </div>
+      </div>
+      <div style="margin-right: 5px; width: 20%; float:left;">
+        <input type="number" name="seqno" value=""
+               class="form-control fom-control-sm" style="width: 100%;" th:field="*{seqno}" placeholder="출력순서를 입력하세요.">
+        <div th:if="${#fields.hasErrors('seqno')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('seqno'))}" th:text="${err}"></div>
+        </div>
+      </div>
+      <div style="width: 17%; float:left; margin-top: 3px">
+        <button type="submit" style="height: 34px" class="btn btn-primary btn-sm">등록</button>
+        <button type="button" onclick="location.href='/cate/list_all'" style="height: 34px"
+                class="btn btn-secondary btn-sm">취소
+        </button>
+      </div>
+    </form>
+  </div>
+  <!-- /cate/list_all_component파일의 list_all_fragment를 삽입 -->
+  <div th:replace="~{/cate/list_all_component::list_all_fragment}"></div>
+</div>
+</html>
+

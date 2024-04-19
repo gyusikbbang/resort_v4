@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta
+          name="viewport"
+          content="user-scalable=yes, initial-scale=1.0, minimum-scale=1.0, maximum-scale=10.0, width=device-width"
+  />
+  <title>오버랜딩</title>
+  <link rel="icon" href="img/logo/favicon.png"/>
+  <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <link href="/images/css/style.css" rel="Stylesheet" type="text/css"/>
+  <!-- /static 기준 -->
+</head>
+<body>
+<div class="container_main">
+  <div th:replace="~{navbar::navbarFragment}"></div>
+
+  <div class="content_body">
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      // 변수 come에 들어있는 값을 확인하고 널이 아니면 alert 창으로 표시합니다.
+      if ([[${come}]]) {
+        alert([[${come}]]);
+      }
+      /*]]>*/
+
+      if ([[${login}]]) {
+        alert([[${login}]]);
+      }
+
+      if ([[${logout}]]) {
+        alert([[${logout}]]);
+      }
+
+      if ([[${update}]]) {
+        alert([[${update}]]);
+      }
+      if ([[${Abnormal}]]) {
+        alert([[${Abnormal}]]);
+      }
+
+
+    </script>
+
+    <th:block layout:fragment="content"></th:block>
+    <div class="bottom_menu">
+      <hr/>
+      Copyright K Digital, 국가기간 전략산업 직종 직업 훈련 All rights
+      reserved.
+    </div>
+  </div>
+  <!-- container_main 종료 -->
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<div th:fragment="search_fragment">
+  <div style="text-align: right; clear:both;">
+    <form name="frm_search" th:action="@{/cate/search}">
+      <select name="type" id="" style="width: 150px;" aria-label="Default select example" required>
+        <option th:selected="${type=='100'}" value="100">중분류</option>
+        <option th:selected="${type=='200'}" value="200">소분류</option>
+        <option th:selected="${type=='300'}" value="300">중분류+소분류</option>
+      </select>
+      <input type="text" name="word" id="word" th:value="${word}">
+      <button type='submit' class='btn btn-secondary btn-sm' style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">
+        검색
+      </button>
+      <span th:if="${search != null || nulllist != null}">
+        <button type='button' onclick="location.href='/cate/search'" class='btn btn-secondary btn-sm'
+                style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색 취소</button>
+      </span>
+    </form>
+  </div>
+</div>

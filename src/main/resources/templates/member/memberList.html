@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+  <div class='title_line'>회원(관리자 전용)</div>
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a href='./create'>회원 가입</a>
+    <span class='menu_divide'>│</span>
+    <a href='./list.do'>목록</a>
+    <div class='menu_line'></div>
+  </aside>
+
+  <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 5%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 30%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 10%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'></th>
+      <th class='th_bs'>ID</th>
+      <th class='th_bs'>성명</th>
+      <th class='th_bs'>전화번호</th>
+      <th class='th_bs'>주소</th>
+      <th class='th_bs'>등록일</th>
+      <th class='th_bs'></th>
+    </tr>
+
+    <tr th:each="memberVO, status:${list}">
+      <td>
+      <div th:if="${memberVO.grade}">
+        <div th:if="*{memberVO.grade >= 1 and memberVO.grade <= 10}">
+          <a th:href="@{|./update_grade?memberno=${memberVO.memberno}|}">  <img src='/member/images/admin.png' title="관리자" class="icon"></a>
+        </div>
+        <div th:if="*{memberVO.grade >= 11 and memberVO.grade <= 20}">
+          <a th:href="@{|./update_grade?memberno=${memberVO.memberno}|}"> <img src='/member/images/user.png' title="회원" class="icon"></a>
+        </div>
+        <div th:if="*{memberVO.grade >= 30 and memberVO.grade <= 39}">
+          <a th:href="@{|./update_grade?memberno=${memberVO.memberno}|}"> <img src='/member/images/pause.png' title="정지 회원" class="icon"></a>
+        </div>
+        <div th:if="*{memberVO.grade >= 40 and memberVO.grade <= 49}">
+          <a th:href="@{|./update_grade?memberno=${memberVO.memberno}|}">  <img src='/member/images/x.png' title="탈퇴 회원" class="icon"> </a>
+        </div>
+      </div>
+      </td>
+      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.id}"></a></td>
+      <td class='td_left'><a th:href="@{|./read?memberno=${memberVO.memberno}|}" th:text="${memberVO.mname}"></a></td>
+      <td class='td_basic' th:text="${memberVO.tel}"></td>
+      <td class='td_left'>
+        <span th:if="${memberVO.address1.length() > 15 }" th:text="${memberVO.address1.substring(0, 15) }"></span>
+        <span th:unless="${memberVO.address1.length() > 15 }" th:text="${memberVO.address1}"></span>
+      </td>
+      <td class='td_basic' th:text="${memberVO.mdate.substring(0, 10)}"></td>
+      <td class='td_basic'>
+        <a th:href="@{|./read?memberno=${memberVO.memberno}|}"><img src='/member/images/update.png' title='수정' class="icon"></a>
+        <a th:attr="onclick=|deletecate('${memberVO.memberno}','${memberVO.mname}')|"><img src='/member/images/delete.png' title='삭제' class="icon"></a>
+        <a th:href="@{|./update_grade?memberno=${memberVO.memberno}|}"><img src='/member/images/grade.png' title='등급 수정' class="icon"></a>
+      </td>
+    </tr>
+  </table>
+  <script>
+    function deletecate(memberno, membername) {
+      var name = membername; // cateVO.name 값 가져오기
+
+      if (confirm(name + " 님을 탈퇴 처리하시겠습니까? 삭제하면 복구할 수 없습니다!")) {
+        var form = document.createElement('form');
+        form.method = 'post';
+        form.action = '/member/delete' ;
+        var hiddenField5 = document.createElement('input');
+        hiddenField5.type = 'hidden';
+        hiddenField5.name = 'memberno'; // 서버에서 사용할 변수 이름
+        hiddenField5.value = memberno;
+        form.appendChild(hiddenField5);
+
+        var hiddenField6 = document.createElement('input');
+        hiddenField6.type = 'hidden';
+        hiddenField6.name = 'mname'; // 서버에서 사용할 변수 이름
+        hiddenField6.value = name;
+        form.appendChild(hiddenField6);
+        document.body.appendChild(form);
+        form.submit();
+      } else {
+        alert("원래 페이지로 돌아갑니다.");
+      }
+    }
+  </script>
+  <div class='bottom_menu'>
+    <button type='button' onclick="location.href='./create.do'" class="btn btn-primary btn-sm">등록</button>
+    <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+  </div>
+
+</div>
+
+
+</html>

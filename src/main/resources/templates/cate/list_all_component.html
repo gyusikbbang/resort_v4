@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<div th:fragment="list_all_fragment"> <!-- <div th:replace=...-->
+
+
+  <table class="table table-hover">
+    <colgroup>
+      <col style='width: 10%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 15%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+      <col style='width: 10%;'/>
+    </colgroup>
+    <thead>
+    <tr>
+      <th class="th_bs">선택</th>
+      <th class="th_bs">번호</th>
+      <th class="th_bs">중분류</th>
+      <th class="th_bs">소분류</th>
+      <th class="th_bs">자료수</th>
+      <th class="th_bs">등록일</th>
+      <th class="th_bs">순서</th>
+      <th class="th_bs">기타</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Iterate over your data -->
+    <tr th:each="cateVO : ${list}">
+      <td class="td_bs"><input type="checkbox" name="selectedCategories" th:value="${cateVO.cateno}"></td>
+      <td class="td_bs" th:text="${cateVO.cateno}" id="cateno"></td>
+      <td class="td_bs"><a th:href="@{|/cate/read/${cateVO.cateno}/${name}|}" style="display: block;"
+                           th:text="${cateVO.name}"></a></td>
+
+      <td class="td_bs"><a th:href="@{|/cate/read/${cateVO.cateno}/${name}|}" style="display: block;"
+                           th:text="${cateVO.namesub}"></a></td>
+      <td class="td_bs" th:text="${cateVO.cnt}"></td>
+      <td class="td_bs" th:text="${cateVO.rdate.substring(0,10)}"></td>
+      <td class="td_bs" th:text="${cateVO.seqno}"></td>
+      <td class="td_bs">
+
+        <a href="#" style="text-decoration: none" th:if="${cateVO.visible == 'Y'}"
+           th:attr="onclick=|hide('${cateVO.cateno}','${cateVO.name}')|">
+          <img src="/cate/images/show.png" class="icon" onmouseover="this.src='/cate/images/hide.png'"
+               onmouseout="this.src='/cate/images/show.png'">
+        </a>
+
+        <a href="#" style="text-decoration: none" th:if="${cateVO.visible == 'N'}"
+           th:attr="onclick=|show('${cateVO.cateno}','${cateVO.name}')|">
+          <img src="/cate/images/hide.png" class="icon" onmouseover="this.src='/cate/images/show.png'"
+               onmouseout="this.src='/cate/images/hide.png'">
+        </a>
+        <a href="#" style="text-decoration: none" class="animate__slideOutDown"
+           th:attr="onclick=|upbackward('${cateVO.cateno}','${cateVO.name}')|">
+          <img src="/cate/images/decrease.png" class="icon">
+
+        </a>
+
+
+        <a style="text-decoration: none" href="#" th:attr="onclick=|upforward('${cateVO.cateno}','${cateVO.name}')|">
+          <img src="/cate/images/increase.png" class="icon">
+        </a>
+        <a style="text-decoration: none" th:href="@{'/cate/update/' + ${cateVO.cateno}}">
+          <img src="/cate/images/update.png" class="icon">
+        </a>
+
+        <a style="text-decoration: none" href="#" th:attr="onclick=|deletecate('${cateVO.cateno}','${cateVO.name}')|">
+          <img src="/cate/images/delete.png" class="icon">
+
+
+        </a>
+        <script>
+            function deletecate(cateno, catename) {
+                var name = catename; // cateVO.name 값 가져오기
+
+                if (confirm(cateno + "번의 " + name + " 중분류를 삭제하시겠습니까? 삭제하면 복구할 수 없습니다!")) {
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cate/delete/' + cateno;
+                    var hiddenField = document.createElement('input');
+                    hiddenField.type = 'hidden';
+                    hiddenField.name = 'name'; // 서버에서 사용할 변수 이름
+                    hiddenField.value = name;
+                    form.appendChild(hiddenField);
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    alert("원래 페이지로 돌아갑니다.");
+
+                }
+            }
+        </script>
+        <script>
+            function upforward(cateno, catename) {
+                var name = catename; // cateVO.name 값 가져오기
+
+                if (confirm(cateno + "번의 " + name + " 중분류의 순서를 하나 올리겠습니까?")) {
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cate/upforward/' + cateno;
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    alert("원래 페이지로 돌아갑니다.");
+
+                }
+            }
+        </script>
+
+        <script>
+            function upbackward(cateno, catename) {
+                var name = catename; // cateVO.name 값 가져오기
+
+                if (confirm(cateno + "번의 " + name + " 중분류의 순서를 하나 내리겠습니까?")) {
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cate/upbackward/' + cateno;
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    alert("원래 페이지로 돌아갑니다.");
+
+                }
+            }
+        </script>
+
+
+        <script>
+            function show(cateno, catename) {
+                var name = catename; // cateVO.name 값 가져오기
+
+                if (confirm(cateno + "번의 " + name + " 중분류의 공개 처리 하겠습니까?")) {
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cate/show/' + cateno;
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    alert("원래 페이지로 돌아갑니다.");
+
+                }
+            }
+        </script>
+
+        <script>
+            function hide(cateno, catename) {
+
+                var name = catename; // cateVO.name 값 가져오기
+
+                if (confirm(cateno + "번의 " + name + " 중분류의 숨김 처리 하겠습니까?")) {
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/cate/hide/' + cateno;
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    alert("원래 페이지로 돌아갑니다.");
+
+                }
+            }
+        </script>
+
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <button type="button" class="btn btn-danger btn-sm" onclick="multideletecate()">선택 삭제</button>
+
+  <script>
+      function multideletecate() {
+          var selectedCategories = document.getElementsByName('selectedCategories');
+          var selectedCatenoList = [];
+          for (var i = 0; i < selectedCategories.length; i++) {
+              if (selectedCategories[i].checked) {
+                  selectedCatenoList.push(selectedCategories[i].value);
+              }
+          }
+
+          if (selectedCatenoList.length === 0) {
+              alert("선택된 카테고리가 없습니다.");
+              return;
+          }
+
+          if (confirm(selectedCatenoList.join(", ") + "번의 카테고리를 삭제하시겠습니까? 삭제하면 복구할 수 없습니다!")) {
+              var form = document.createElement('form');
+              form.method = 'post';
+              form.action = '/cate/multidelete';
+
+              for (var j = 0; j < selectedCatenoList.length; j++) {
+                  var hiddenField = document.createElement('input');
+                  hiddenField.type = 'hidden';
+                  hiddenField.name = 'catenoList';
+                  hiddenField.value = selectedCatenoList[j];
+                  form.appendChild(hiddenField);
+              }
+
+              document.body.appendChild(form);
+              form.submit();
+          } else {
+              alert("삭제가 취소되었습니다.");
+          }
+      }
+  </script>
+</div>
+
+

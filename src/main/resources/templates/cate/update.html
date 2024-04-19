@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div>
+    <div th:if="${m != null}" class="alert alert-warning" role="alert">
+      <span th:text="${m}"></span>
+    </div>
+    <div class="title_line">카테고리 수정</div>
+    <aside class="aside_right">
+      <a th:href="@{|/cate/search?now_page=${now_page}|}">목록</a>
+      <span class="menu_divide">│</span>
+      <a th:href="@{|/cate/update/${cateVO.cateno}?word=${word}&type=${type}&now_page=${now_page}|}">수정</a>
+      <span class="menu_divide">│</span>
+      <a href="#" style="cursor: pointer" th:attr="onclick=|deletecate('${cateVO.cateno}','${cateVO.name}','${word}','${type}','${now_page})'|">삭제</a>
+      <script>
+          function deletecate(cateno, catename, word, type,now_page) {
+              var name = catename; // cateVO.name 값 가져오기
+
+              if (confirm(cateno + "번의 " + name + " 중분류를 삭제하시겠습니까? 삭제하면 복구할 수 없습니다!")) {
+                  var form = document.createElement('form');
+                  form.method = 'post';
+                  form.action = '/cate/delete/' + cateno;
+                  var hiddenField1 = document.createElement('input');
+                  hiddenField1.type = 'hidden';
+                  hiddenField1.name = 'name'; // 서버에서 사용할 변수 이름
+                  hiddenField1.value = name;
+                  form.appendChild(hiddenField1);
+                  var hiddenField2 = document.createElement('input');
+                  hiddenField2.type = 'hidden';
+                  hiddenField2.name = 'word'; // 서버에서 사용할 변수 이름
+                  hiddenField2.value = word;
+                  form.appendChild(hiddenField2);
+                  var hiddenField3 = document.createElement('input');
+                  hiddenField3.type = 'hidden';
+                  hiddenField3.name = 'type'; // 서버에서 사용할 변수 이름
+                  hiddenField3.value = type;
+                  var hiddenField4 = document.createElement('input');
+                  hiddenField4.type = 'hidden';
+                  hiddenField4.name = 'now_page'; // 서버에서 사용할 변수 이름
+                  hiddenField4.value = now_page;
+                  form.appendChild(hiddenField4);
+                  document.body.appendChild(form);
+                  form.submit();
+              } else {
+                  alert("원래 페이지로 돌아갑니다.");
+              }
+          }
+      </script>
+
+
+      <span class="menu_divide">│</span>
+      <a th:href="@{/cate/search}">등록</a>
+      <span class="menu_divide">│</span>
+      <a href="javascript:location.reload();"> 새로고침</a>
+    </aside>
+    <div class="menu_line"></div>
+    <form name="frm" th:object="${cateVO}" method="post" th:action="@{|/cate/update/${cateVO.cateno}|}"
+
+          style="width: 50%; margin: 5px auto">
+      <input type="hidden" name="cateno" autofocus="autofocus"
+             class="form-control fom-control-sm" th:field="*{cateno}">
+      <div>
+
+        <label>중분류</label>
+        <input type="text" name="name" th:value="${cateVO.name}" autofocus="autofocus"
+               class="form-control fom-control-sm" th:field="*{name}">
+        <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('name'))}" th:text="${err}"></div>
+        </div>
+      </div>
+      <div>
+        <label>소분류</label>
+        <input type="text" name="namesub" th:value="${cateVO.namesub}"
+               class="form-control fom-control-sm" th:field="*{namesub}">
+        <div th:if="${#fields.hasErrors('namesub')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('namesub'))}" th:text="${err}"></div>
+        </div>
+      </div>
+      <div>
+        <label>관련 자료수</label>
+        <input type="number" th:value="${cateVO.cnt}" value=""
+               class="form-control fom-control-sm" th:field="*{cnt}">
+        <div th:if="${#fields.hasErrors('cnt')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('cnt'))}" th:text="${err}"></div>
+        </div>
+      </div>
+
+
+      <div>
+        <label>출력 순서</label>
+        <input type="number" th:value="${cateVO.seqno}" value=""
+               class="form-control fom-control-sm" th:field="*{seqno}">
+        <div th:if="${#fields.hasErrors('seqno')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('seqno'))}" th:text="${err}"></div>
+        </div>
+      </div>
+
+      <div>
+        <label>출력 모드</label>
+        <input type="text" th:value="${cateVO.visible}" value=""
+               class="form-control fom-control-sm" th:field="*{visible}">
+        <div th:if="${#fields.hasErrors('visible')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
+          <div th:each="err : ${#lists.sort(#fields.errors('visible'))}" th:text="${err}"></div>
+        </div>
+      </div>
+
+
+      <div hidden="hidden">
+
+        <input type="text" name="word" th:value="${word}"
+               class="form-control fom-control-sm" style="width: 50%;" readonly>
+
+
+      </div>
+      <div hidden="hidden">
+
+        <input type="text" name="type" th:value="${type}"
+               class="form-control fom-control-sm" style="width: 50%;" readonly>
+
+
+      </div>
+
+
+
+      <div hidden="hidden">
+
+        <input type="text" name="now_page" th:value="${now_page}" value=""
+               class="form-control fom-control-sm" style="width: 50%;">
+
+
+      </div>
+
+
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-warning btn-sm">저장</button>
+
+      </div>
+
+    </form>
+  </div>
+  <div th:replace="~{cate/search_all_component::search_all_fragment}"></div>
+
+</div>
+</html>
