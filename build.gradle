@@ -44,6 +44,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload
 	implementation 'commons-codec:commons-codec:1.10'
 	implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
+	implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
 
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 }

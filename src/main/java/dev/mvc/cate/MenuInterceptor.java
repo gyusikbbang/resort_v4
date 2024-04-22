@@ -20,15 +20,14 @@ public class MenuInterceptor implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     // 컨트롤러가 호출되기 전에 실행됩니다.
     HttpSession session = request.getSession();
-    String id = (String) session.getAttribute("id");
 
-    if (id == null) {
-      return  true;
-    } else {
+
+
+
       ArrayList<CateVOMenu> menu = cateProc.menu();
       request.setAttribute("menu", menu); // 모델 어트리뷰트로 설정합니다.
       return true; // 다음 인터셉터 또는 컨트롤러로 요청을 전달합니다.
-    }
+
 
   }
 

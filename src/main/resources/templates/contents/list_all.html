@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+<div class="title_line"> 전체 글 목록</div>
+  <div style="clear: both; text-align: right">
+    <div style="display: inline-block; vertical-align: top; width: 300px; margin-right: 50px; text-align: center"
+         th:if="${searchnull != null}" class="alert alert-warning" role="alert">
+      <span th:text="${searchnull}"></span>
+    </div>
+    <div style="display: inline-block; vertical-align: top;">
+      <div th:replace="~{/cate/search_form::search_fragment}"></div>
+    </div>
+  </div>
+
+  <aside class="aside_right">
+    <a href="javascript: location.reload();">새로 고침</a>
+  </aside>
+  <div class="menu_line"></div>
+
+
+  <!-- /cate/list_all_component파일의 list_all_fragment를 삽입 -->
+  <div th:replace="~{/contents/list_all_component::list_all_fragment}"></div>
+</div>
+</html>
+

@@ -8,7 +8,7 @@ import lombok.ToString;
 
 /*
         contentsno                            NUMBER(10)         NOT NULL         PRIMARY KEY,
-        adminno                              NUMBER(10)     NOT NULL ,
+        memberno                              NUMBER(10)     NOT NULL ,
         cateno                                NUMBER(10)         NOT NULL ,
         title                                 VARCHAR2(300)         NOT NULL,
         content                               CLOB                  NOT NULL,
@@ -37,7 +37,7 @@ public class ContentsVO {
   /** 컨텐츠 번호 */
   private int contentsno;
   /** 관리자 번호 */
-  private int adminno;
+  private int memberno;
   /** 카테고리 번호 */
   private int cateno;
   /** 제목 */
@@ -104,6 +104,10 @@ public class ContentsVO {
   private int end_num;
   /** 현재 페이지 */
   private int now_page = 1;
+
+
+
+
 
 
 }

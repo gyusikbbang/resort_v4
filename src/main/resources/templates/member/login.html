@@ -106,7 +106,7 @@
   <div class='menu_line'></div>
 
   <div style="width: 60%; margin: 0px auto ">
-    <div class="title_line">회원가입 (*는 필수 )</div>
+    <div class="title_line">로그인</div>
     <form   id="frm" name="frm" th:object="${memberVO}" method="post" action="/member/login">
       <label>아이디(이메일)* </label>
 
@@ -115,7 +115,7 @@
         <input type="text" name="id" value="" autofocus="autofocus"
                class="form-control form-control-sm" style="width: 27%;" th:field="*{id}" required>
 
-    <input type="checkbox" name=""
+    <input type="checkbox" name="">
       </div>
       <div th:if="${#fields.hasErrors('id')}" class="alert alert-danger" role="alert" style="margin-top: 5px;">
         <div th:each="err : ${#lists.sort(#fields.errors('id'))}" th:text="${err}"></div>

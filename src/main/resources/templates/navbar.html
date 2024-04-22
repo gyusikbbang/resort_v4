@@ -16,35 +16,70 @@
                data-bs-toggle="dropdown" aria-expanded="false" th:text="${Menu.name}">메뉴 1</a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <li th:each="cateVO : ${Menu.listnamesub}">
-                <a class="dropdown-item" th:text="${cateVO.namesub}" href="#"></a>
+                <a class="dropdown-item" th:text="@{|${cateVO.namesub} 글 등록|}" th:href="@{|/contents/create?cateno=${cateVO.cateno}|}"></a>
+
+
+                <a class="dropdown-item" th:text="@{|${cateVO.namesub} 글 조회|}"  th:href="@{|/contents/list_by_cateno?cateno=${cateVO.cateno}|}"></a>
               </li>
             </ul>
           </li>
-          <li class="nav-item" th:if="${session.grade == 'admin'}">
-            <a class="nav-link" href="/cate/search">목록</a>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false" th:text="회원">메뉴 1</a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li class="nav-item" th:if="${session.id != null}">
+                <a class="nav-link" href="/member/my_page" th:text="${session.mname}"></a>
+              </li>
+              <li class="nav-item" th:if="${session.id != null}">
+                <a class="nav-link" href="/member/update_password"> 패스워드 변경</a>
+              </li>
+              <li class="nav-item" th:if="${session.id == null}">
+                <a class="nav-link" href="/member/login">로그인</a>
+              </li>
+              <li class="nav-item" th:if="${session.id != null}">
+                <a class="nav-link" href="/member/logout">로그아웃</a>
+              </li>
+              <li class="nav-item" th:if="${session.id == null}">
+                <a class="nav-link" href="/member/update_password"> 아이디 찾기</a>
+              </li>
+              <li class="nav-item" th:if="${session.id == null}">
+                <a class="nav-link" href="/member/update_password"> 비밀번호 찾기</a>
+              </li>
+              <li class="nav-item" th:if="${session.id != null}">
+                <a class="nav-link" href="/member/update_password"> 로그인 내역</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/cate/list_y">비회원/회원 카테고리 전체 목록</a>
+              </li>
+            </ul>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/cate/list_y">비회원/회원 카테고리 전체 목록</a>
-          </li>
-          <li class="nav-item" th:if="${session.id == null}">
-            <a class="nav-link" href="/member/create">회원 가입</a>
+
+          <li class="nav-item dropdown" th:if="${session.grade=='admin'}">
+            <a class="nav-link dropdown-toggle" href="#" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false" th:text="관리자"></a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li class="nav-item">
+                <a class="nav-link" href="/member/list">회원 목록</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/cate/search">카테고리 목록</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/contents/create">컨텐츠 등록</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/contents/list_all">컨텐츠 조회</a>
+              </li>
+            </ul>
           </li>
           <li class="nav-item" th:if="${session.id != null}">
             <a class="nav-link" href="/member/my_page" th:text="${session.mname}"></a>
           </li>
-          <li class="nav-item" th:if="${session.id != null}">
-            <a class="nav-link" href="/member/update_password" > 패스워드 변경</a>
-          </li>
-          <li class="nav-item" th:if="${session.grade == 'admin'}">
-            <a class="nav-link" href="/member/list">회원 목록</a>
-          </li>
-          <li class="nav-item" th:if="${session.id == null}">
-            <a class="nav-link" href="/member/login">로그인</a>
-          </li>
-          <li class="nav-item" th:if="${session.id != null}">
-            <a class="nav-link" href="/member/logout">로그아웃</a>
-          </li>
+
+
         </ul>
+
       </div>
     </div>
   </nav>

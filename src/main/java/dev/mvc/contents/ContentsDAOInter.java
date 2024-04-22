@@ -131,4 +131,6 @@ public interface ContentsDAOInter {
    */
   public int delete_by_memberno(int memberno);
 
+
+
 }

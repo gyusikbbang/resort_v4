@@ -77,4 +77,11 @@
         WHERE memberno=#{memberno}
     </update>
 
+    <select id="list_by_cateno" resultType="dev.mvc.contents.ContentsVO" parameterType="int">
+        SELECT contentsno, adminno, cateno, title, content, recom, cnt, replycnt, rdate,
+               file1, file1saved, thumb1, size1, mp4
+        FROM contents
+        WHERE cateno = #{cateno}
+        ORDER BY contentsno DESC
+    </select>
 </mapper>
