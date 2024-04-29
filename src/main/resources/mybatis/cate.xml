@@ -277,5 +277,21 @@
     </select>
 
 
+     <!--   관련 자료수 업데이트 -->
+    <update id="update_cnt" parameterType="Integer">
+        UPDATE cate
+        SET cnt = (SELECT COUNT(*) FROM contents WHERE cateno = 136)
+        WHERE cateno = 136
+           or cateno = (select cateno from cate where name = (SELECT name FROM cate WHERE cateno = 136) AND namesub = '-')
+
+
+
+
+
+    </update>
+
+
+
+
 
 </mapper>

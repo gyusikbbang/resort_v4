@@ -129,5 +129,14 @@ public interface CateDAOInter {
 //  public int list_search_count(String word);
 
   public int list_search_count(Map<String, Object> search);
+
+
+  /**
+   *
+   * 관련 자료수 업데이트
+   * @param cateno
+   * @return
+   */
+  public int update_cnt(int cateno);
 }
 

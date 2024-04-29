@@ -289,4 +289,15 @@ public class CateProc implements CateProInter {
     return str.toString();
   }
 
+  /**
+   *
+   * 관련 자료수 업데이트
+   * @param cateno
+   * @return
+   */
+  @Override
+  public int update_cnt(int cateno) {
+    return this.cateDAO.update_cnt(cateno);
+  }
+
 }

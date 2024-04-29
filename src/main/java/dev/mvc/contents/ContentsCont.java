@@ -163,6 +163,9 @@ public class ContentsCont {
 
 
           int cnt = this.contentsProc.create(contentsVO);
+          if (cnt == 1) {
+            System.out.println("->"+ this.cateProc.update_cnt(cateno));
+          }
           return "redirect:/contents/search?nowpage="+now_page+"&contentsno="+contentsVO.getContentsno()+"&cateno=" + cateno;
 
 
@@ -179,6 +182,9 @@ public class ContentsCont {
 
 
         int cnt = this.contentsProc.create(contentsVO);
+        if (cnt == 1) {
+          System.out.println("->"+ this.cateProc.update_cnt(cateno));
+        }
 
         return "redirect:/contents/search?nowpage="+now_page+"&contentsno="+contentsVO.getContentsno()+"&cateno=" + cateno;
       }
@@ -786,11 +792,11 @@ public class ContentsCont {
     // -------------------------------------------------------------------
     // 삭제할 파일 정보를 읽어옴.
     ContentsVO contentsVO_read = contentsProc.read(contentsVO.getContentsno());
-    int now_page = contentsVO.getNow_page();
+    int now_page = contentsVO_read.getNow_page();
 
     HashMap<String, Object> hashMap = new HashMap<String, Object>();
-    hashMap.put("cateno", contentsVO.getCateno());
-    hashMap.put("word", contentsVO.getWord());
+    hashMap.put("cateno", contentsVO_read.getCateno());
+    hashMap.put("word", contentsVO_read.getWord());
 
     if (contentsProc.search_count(hashMap) % Contents.RECORD_PER_PAGE == 0) {
       now_page = now_page - 1; // 삭제시 DBMS는 바로 적용되나 크롬은 새로고침등의 필요로 단계가 작동 해야함.
@@ -801,12 +807,17 @@ public class ContentsCont {
     if (this.memberProC.isMemberAdmin(session)) {
       if (contentsVO_read != null) {
 
-        String file1saved = contentsVO.getFile1saved();
-        String thumb1 = contentsVO.getThumb1();
+        String file1saved = contentsVO_read.getFile1saved();
+        String thumb1 = contentsVO_read.getThumb1();
+
+
+        System.out.println("filesaved->"+file1saved);
+        System.out.println("thumb1"+ thumb1);
 
         String uploadDir = Contents.getUploadDir();
         Tool.deleteFile(uploadDir, file1saved);  // 실제 저장된 파일삭제
         Tool.deleteFile(uploadDir, thumb1);     // preview 이미지 삭제
+
         // -------------------------------------------------------------------
         // 파일 삭제 종료
         // -------------------------------------------------------------------
@@ -823,6 +834,7 @@ public class ContentsCont {
           ra.addFlashAttribute("cateno", contentsVO.getCateno());
           ra.addFlashAttribute("now_page", now_page);
           ra.addFlashAttribute("del",1);
+          this.cateProc.update_cnt(contentsVO.getCateno());
           return "redirect:/contents/search?now_page"+now_page+"&word"+Tool.encode(word)+"&cateno="+cateno;
         } else {
           model.addAttribute("cateno", contentsVO.getCateno());

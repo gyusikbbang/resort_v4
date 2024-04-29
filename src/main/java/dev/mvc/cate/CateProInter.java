@@ -140,4 +140,11 @@ public interface CateProInter {
   public String pagingBox(int now_page, String word,String type, String list_file, int search_count,int record_per_page, int page_per_block);
 
 
+  /**
+   *
+   * 관련 자료수 업데이트
+   * @param cateno
+   * @return
+   */
+  public int update_cnt(int cateno);
 }
