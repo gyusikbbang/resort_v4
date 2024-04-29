@@ -60,7 +60,7 @@ public class MemberProC implements MemberProInter {
   public boolean isMember(HttpSession session) {
     boolean sw = false; // 로그인하지 않은 것으로 초기화
     String grade = (String) session.getAttribute("grade");
-    System.out.println(grade);
+//    System.out.println(grade);
 
     if (grade != null) {
       if (grade.equals("admin") || grade.equals("member")) {

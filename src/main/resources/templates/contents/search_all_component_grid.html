@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<div th:fragment="search_all_fragment_grid"> <!-- <div th:replace=...-->
+
+  <div class='title_line'>
+    <span th:if="${cateno == 0}" class="title_line_text">전체 글 조회</span>
+    <span th:if="${cateVO.name !=null}" th:text="${cateVO.name}" class="title_line_text"></span>
+    > <span th:if="${cateVO.namesub !=null}" th:text="@{|${cateVO.namesub} >  글 리스트|}"class="title_line_text"> </span>
+  </div>
+
+  <aside class="aside_right">
+    <a  th:if="${cateno != 0} and ${session.grade=='admin'}"  th:text="@{|글 등록|}" th:href="@{|/contents/create?cateno=${cateVO.cateno}|}"></a>
+
+    <span class="menu_divide">|</span>
+
+    <a th:href="@{|/contents/search?word=${word}&now_page=${now_page}&cateno=${cateVO.cateno}|}">목록형</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/contents/search_grid?word=${word}&now_page=${now_page}&cateno=${cateno}|}">갤러리형</a>
+    <span class='menu_divide'>│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside>
+  <div th:replace="~{contents/search_form::search_fragment}"></div>
+  <div class='menu_line'></div>
+
+  <div style='width: 100%;'> <!-- 갤러리 layout 시작 -->
+
+
+    <div th:each="contentsVO, status:${searchlist}"
+         th:attr="onclick=|location.href='/contents/read?word=${word}&now_page=${now_page}&contentsno=${contentsVO.contentsno}&cateno=${cateno}'|"
+         style='width: 24%; height: 200px; float: left; margin: 0.5%; padding: 0.5%; background-color: #EEEFFF; text-align: left; cursor: pointer;'>
+      <div  style="vertical-align: middle; text-align: center;">
+        <div style="width: 100%; height: 120px;" th:if="${contentsVO.file1.endsWith('jpg') or contentsVO.file1.endsWith('png')  or contentsVO.file1.endsWith('gif')}">
+          <img th:src="@{|/contents/storage/${contentsVO.thumb1}|}" style="width: 100%; height: 100%;" >
+        </div>
+
+        <div th:if="${((contentsVO.file1.endsWith('jpg') or contentsVO.file1.endsWith('png')  or contentsVO.file1.endsWith('gif')) == false) and (contentsVO.size1 > 0)}">
+          <span th:text="${contentsVO.file1}"></span>
+        </div>
+
+        <div th:if="${contentsVO.size1 == 0}" style="width: 100%; height: 120px;">
+          <img src="/contents/images/none.jpg"  style="width: 100%; height: 100%;">
+        </div>
+
+      </div>
+
+      <div class='td_left'>
+        <span th:text="${contentsVO.title}" style="font-weight: bold;"></span><br>
+        <span th:if="${contentsVO.content.length() > 100 }"
+              th:text="|${contentsVO.content.substring(0, 100) }...|"></span>
+        <span th:if="${contentsVO.content.length() <= 160 }"
+              th:text="|${contentsVO.content}|"></span>
+
+      </div>
+    </div>
+  </div> <!-- 갤러리 layout 종료 -->
+
+  <div class="bottom_menu" th:utext="${paging}"></div>
+
+</div>
+
+
+
+<!-- 페이지 버튼 목록 출력 시작 -->
+
+
+
+

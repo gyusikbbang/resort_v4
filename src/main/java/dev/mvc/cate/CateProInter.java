@@ -116,7 +116,20 @@ public interface CateProInter {
    */
   public ArrayList<CateVO> list_all_name_y();
 
+  /**
+   *  메뉴에 출력하는거 소분류
+   * @param name
+   * @return
+   */
   public ArrayList<CateVO> list_namesub_y(String name);
+  /**
+   *
+   * @param name
+   * @return
+   */
+  public ArrayList<CateVO> list_namesub();
+
+
   public ArrayList<CateVOMenu> menu();
 
   public ArrayList<CateVO> list_search_paging(String word,String type, int now_page,int record_per_page);

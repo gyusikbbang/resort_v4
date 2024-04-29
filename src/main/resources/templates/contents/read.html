@@ -1,0 +1,175 @@
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    if ([[${cnt} == '1']]) {
+      alert('수정이 완료되었습니다');
+    } else if ([[${cnt} == '-1']]) {
+      alert('수정이 실패');
+    }
+
+    /*]]>*/
+  </script>
+
+
+
+  <div class='title_line'>
+    <span th:if="${cateno == 0}" class="title_line_text">전체 글 등록</span>
+
+    <span th:if="${cateVO.name !=null}" th:text="${cateVO.name}" class="title_line_text"></span>
+    > <span th:if="${cateVO.namesub !=null}" th:text="@{|${cateVO.namesub} >  글 조회|}" class="title_line_text"></span>
+
+  </div>
+  <aside th:if="${session.grade == 'member'} or  ${session.grade == null}" class="aside_right">
+
+
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a href="./list_by_cateno.do?cateno=${cateno }&now_page=${param.now_page}&word=${param.word }">목록형</a>
+    <span class='menu_divide'>│</span>
+    <a href="./list_by_cateno_grid.do?cateno=${cateno }&now_page=${param.now_page}&word=${param.word }">갤러리형</a>
+  </aside>
+
+  <aside th:if="${session.grade == 'admin'}" class="aside_right">
+
+    <a href="./create.do?cateno=${cateno }">등록</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|./update_text?contentsno=${contentsVO.contentsno}&now_page=${now_page}&word=${word}&cateno=${cateno}|}">글
+      수정</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|./update_file?contentsno=${contentsVO.contentsno}&now_page=${now_page}&word=${word}&cateno=${cateno}|}">파일
+      수정</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|./map?contentsno=${contentsVO.contentsno}&now_page=${now_page}&word=${word}&cateno=${cateno}|}">지도</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|./youtube?contentsno=${contentsVO.contentsno}&now_page=${now_page}&word=${word}&cateno=${cateno}|}">Youtube</a>
+    <span class='menu_divide'>│</span>
+    <a style="cursor: pointer;"
+       th:attr="onclick=|submitForm('${contentsVO.contentsno}','${contentsVO.title}', '${now_page}', '${word}', '${cateno}')|">삭제</a>
+
+    <span class='menu_divide'>│</span>
+
+    <script>
+      function submitForm(contentsno, title, now_page, word, cateno) {
+        // 새로운 폼 엘리먼트 생성
+        if (confirm(contentsno + "번의 " + title + "를  삭제하시겠습니까? 삭제하면 복구할 수 없습니다! ")) {
+          var form = document.createElement('form');
+          form.setAttribute('method', 'post');
+          form.setAttribute('action', './delete');
+
+          // 히든 필드 추가 (데이터 전송에 필요한 정보)
+          var contentsnoInput = document.createElement('input');
+          contentsnoInput.setAttribute('type', 'hidden');
+          contentsnoInput.setAttribute('name', 'contentsno');
+          contentsnoInput.setAttribute('value', contentsno);
+          form.appendChild(contentsnoInput);
+
+          var nowPageInput = document.createElement('input');
+          nowPageInput.setAttribute('type', 'hidden');
+          nowPageInput.setAttribute('name', 'now_page');
+          nowPageInput.setAttribute('value', now_page);
+          form.appendChild(nowPageInput);
+
+          var wordInput = document.createElement('input');
+          wordInput.setAttribute('type', 'hidden');
+          wordInput.setAttribute('name', 'word');
+          wordInput.setAttribute('value', word);
+          form.appendChild(wordInput);
+
+          var catenoInput = document.createElement('input');
+          catenoInput.setAttribute('type', 'hidden');
+          catenoInput.setAttribute('name', 'cateno');
+          catenoInput.setAttribute('value', cateno);
+          form.appendChild(catenoInput);
+
+          // 폼을 HTML body에 추가하고 전송
+          document.body.appendChild(form);
+          form.submit();
+        } else {
+          alert("원래 페이지로 돌아갑니다.");
+        }
+      }
+    </script>
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/contents/search?word=${word}&now_page=${now_page}&cateno=${cateVO.cateno}|}">목록형</a>
+    <span class='menu_divide'>│</span>
+    <a th:href="@{|/contents/search_grid?word=${word}&now_page=${now_page}&cateno=${cateno}|}">갤러리형</a>
+  </aside>
+  <div th:replace="~{contents/search_form::search_fragment}"></div>
+  <div hidden="hidden" style="text-align: right; clear: both;">
+
+  </div>
+
+  <div class='menu_line'></div>
+
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div style="width: 100%; word-break: break-all;">
+          <div th:if="${contentsVO.file1.endsWith('jpg') or contentsVO.file1.endsWith('png')  or contentsVO.file1.endsWith('gif')}">
+            <img th:src="@{|/contents/storage/${contentsVO.file1saved}|}"
+                 style='width: 50%; float: left; margin-top: 0.5%; margin-right: 1%;'>
+          </div>
+
+
+          <span style="font-size: 1.5em; font-weight: bold;" th:text="${contentsVO.title}"></span>
+          <span style="font-size: 1em;" th:text="${contentsVO.rdate}"> </span><br><br>
+          <div style="white-space: pre-wrap;"><span th:text="${contentsVO.content}"></span></div>
+
+
+        </div>
+      </li>
+      <li th:if="${contentsVO != null and contentsVO.youtube != null and contentsVO.youtube.trim().length() > 0}"
+          class="li_none" style="clear: both; padding-top: 20px; padding-bottom: 25px;">
+        <div style='text-align: center; width:640px; height: 360px; margin: 0px auto;' th:utext="${contentsVO.youtube}">
+
+        </div>
+      </li>
+
+
+      <li th:if="${contentsVO != null and contentsVO.map != null and contentsVO.map.trim().length() > 0}"
+          class="li_none" style="clear: both; padding-top: 20px; padding-bottom: 25px;">
+        <div style='text-align: center; width:640px; height: 360px; margin: 0px auto;' th:utext="${contentsVO.map}">
+
+        </div>
+      </li>
+
+      <li class="li_none" style="clear: both;">
+        <div style='text-decoration: none;'>
+          <br>
+          <span th:text="@{|검색어(키워드): ${contentsVO.word }|}"></span>
+        </div>
+      </li>
+      <li class="li_none">
+        <div>
+          <!--        <c:if test="${file1.trim().length() > 0 }"> <%&#45;&#45; ServletRegister.java: registrationBean.addUrlMappings("/download"); &#45;&#45;%>-->
+
+
+
+
+          <li class="li_none" th:if="${contentsVO.size1 > 0}">
+            <div>
+              첨부 파일: <a th:href="@{|/download?dir=/contents/storage&filename=${#uris.escapePath(contentsVO.file1saved)}&downname=${#uris.escapePath(contentsVO.file1)}|}"
+                        th:text="@{|${contentsVO.file1}  ${contentsVO.size1_label}|}"></a>
+
+            </div>
+          </li>
+
+          <span th:if="${contentsVO.file1 == ''}"> 첨부 파일 없음:
+
+            <span> 첨부 파일 없음</span>
+          </span>
+
+
+          <!--        </c:if>-->
+        </div>
+      </li>
+    </ul>
+  </fieldset>
+
+
+</div>
+</html>

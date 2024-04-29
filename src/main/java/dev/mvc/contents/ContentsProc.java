@@ -3,6 +3,8 @@ package dev.mvc.contents;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import dev.mvc.tool.Security;
+import dev.mvc.tool.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +13,12 @@ public class ContentsProc implements ContentsProcInter {
   @Autowired  // ContentsDAOInter interface를 구현한 클래스의 객체를 만들어 자동으로 할당해라.
   private ContentsDAOInter contentsDAO;
 
+  @Autowired
+  private  Security security;
+
   @Override  // 추상 메소드를 구현했음.
   public int create(ContentsVO contentsVO) {
+    contentsVO.setPasswd(security.aesEncode(contentsVO.getPasswd()));
     int cnt = this.contentsDAO.create(contentsVO);
     return cnt;
   }
@@ -154,7 +160,7 @@ public class ContentsProc implements ContentsProcInter {
    * @return 페이징 생성 문자열
    */
   @Override
-  public String pagingBox(int cateno, int now_page, String word, String list_file, int search_count){
+  public String pagingBox(int cateno, int now_page, String word, String list_file, int search_count,int record_per_page, int page_per_block){
 
     // 전체 페이지 수: (double)1/10 -> 0.1 -> 1 페이지, (double)12/10 -> 1.2 페이지 -> 2 페이지
     int total_page = (int)(Math.ceil((double)search_count / Contents.RECORD_PER_PAGE));
@@ -172,33 +178,8 @@ public class ContentsProc implements ContentsProcInter {
     StringBuffer str = new StringBuffer(); // String class 보다 문자열 추가등의 편집시 속도가 빠름
 
     // style이 java 파일에 명시되는 경우는 로직에 따라 css가 영향을 많이 받는 경우에 사용하는 방법
-    str.append("<style type='text/css'>");
-    str.append("  #paging {text-align: center; margin-top: 5px; font-size: 1em;}");
-    str.append("  #paging A:link {text-decoration:none; color:black; font-size: 1em;}");
-    str.append("  #paging A:hover{text-decoration:none; background-color: #FFFFFF; color:black; font-size: 1em;}");
-    str.append("  #paging A:visited {text-decoration:none;color:black; font-size: 1em;}");
-    str.append("  .span_box_1{");
-    str.append("    text-align: center;");
-    str.append("    font-size: 1em;");
-    str.append("    border: 1px;");
-    str.append("    border-style: solid;");
-    str.append("    border-color: #cccccc;");
-    str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/");
-    str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/");
-    str.append("  }");
-    str.append("  .span_box_2{");
-    str.append("    text-align: center;");
-    str.append("    background-color: #668db4;");
-    str.append("    color: #FFFFFF;");
-    str.append("    font-size: 1em;");
-    str.append("    border: 1px;");
-    str.append("    border-style: solid;");
-    str.append("    border-color: #cccccc;");
-    str.append("    padding:1px 6px 1px 6px; /*위, 오른쪽, 아래, 왼쪽*/");
-    str.append("    margin:1px 2px 1px 2px; /*위, 오른쪽, 아래, 왼쪽*/");
-    str.append("  }");
-    str.append("</style>");
-    str.append("<DIV id='paging'>");
+    str.append("<nav aria-label='...'>");
+    str.append("<ul class='pagination justify-content-center'>");
 //      str.append("현재 페이지: " + nowPage + " / " + totalPage + "  ");
 
     // 이전 10개 페이지로 이동
@@ -209,7 +190,7 @@ public class ContentsProc implements ContentsProcInter {
     // 현재 3그룹일 경우: (3 - 1) * 10 = 2그룹의 마지막 페이지 20
     int _now_page = (now_grp - 1) * Contents.PAGE_PER_BLOCK;
     if (now_grp >= 2){ // 현재 그룹번호가 2이상이면 페이지수가 11페이지 이상임으로 이전 그룹으로 갈수 있는 링크 생성
-      str.append("<span class='span_box_1'><A href='"+list_file+"?&word="+word+"&now_page="+_now_page+"&cateno="+cateno+"'>이전</A></span>");
+      str.append("<li class='page-item'><a class='page-link' href='"+list_file+"?&word="+word+"&now_page="+_now_page+"&cateno="+cateno+"'>이전</a></li>");
     }
 
     // 중앙의 페이지 목록
@@ -219,10 +200,10 @@ public class ContentsProc implements ContentsProcInter {
       }
 
       if (now_page == i){ // 목록에 출력하는 페이지가 현재페이지와 같다면 CSS 강조(차별을 둠)
-        str.append("<span class='span_box_2'>"+i+"</span>"); // 현재 페이지, 강조
+        str.append("<li class='page-item active'><A class='page-link'>"+i+"</li>"); // 현재 페이지, 강조
       }else{
         // 현재 페이지가 아닌 페이지는 이동이 가능하도록 링크를 설정
-        str.append("<span class='span_box_1'><A href='"+list_file+"?word="+word+"&now_page="+i+"&cateno="+cateno+"'>"+i+"</A></span>");
+        str.append("<li class='page-item'><A  class='page-link'  href='"+list_file+"?word="+word+"&now_page="+i+"&cateno="+cateno+"'>"+i+"</a></li>");
       }
     }
 
@@ -233,15 +214,19 @@ public class ContentsProc implements ContentsProcInter {
     // 현재 페이지 25일경우 -> 현재 3그룹: (3 * 10) + 1 = 4그룹의 시작페이지 31
     _now_page = (now_grp * Contents.PAGE_PER_BLOCK)+1; //  최대 페이지수 + 1
     if (now_grp < total_grp){
-      str.append("<span class='span_box_1'><A href='"+list_file+"?&word="+word+"&now_page="+_now_page+"&cateno="+cateno+"'>다음</A></span>");
+      str.append("li class='page-item'><A class='page-link' href='"+list_file+"?&word="+word+"&now_page="+_now_page+"&cateno="+cateno+"'>다음</A></span>");
     }
-    str.append("</DIV>");
-
+    str.append("</ul>");
+    str.append("</nav>");
     return str.toString();
   }
 
   @Override
   public int password_check(HashMap<String, Object> hashMap) {
+    String passwd = (String) hashMap.get("passwd");
+    String password = security.aesEncode(passwd);
+    hashMap.put("passwd",password);
+
     int cnt = this.contentsDAO.password_check(hashMap);
     return cnt;
   }

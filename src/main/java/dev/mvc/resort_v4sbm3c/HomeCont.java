@@ -32,8 +32,7 @@ public class HomeCont {
   @GetMapping("/")
   public String home(Model model, HttpServletRequest request, HttpSession session) {
     if (this.security != null) {
-      System.out.println("고유 코드: " + security.hashCode());
-      System.out.println(security.aesEncode("1234"));
+
     }
     ArrayList<CateVOMenu> menu = this.cateProc.menu();
 

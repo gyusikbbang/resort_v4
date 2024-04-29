@@ -104,6 +104,11 @@ public class CateProc implements CateProInter {
     return this.cateDAO.list_namesub_y(name);
   }
 
+  @Override
+  public ArrayList<CateVO> list_namesub() {
+    return this.cateDAO.list_namesub();
+  }
+
 
   public ArrayList<CateVOMenu> menu() {
     ArrayList<CateVOMenu> menu = new ArrayList<CateVOMenu>();
@@ -263,7 +268,7 @@ public class CateProc implements CateProInter {
       }
 
       if (now_page == i){ // 목록에 출력하는 페이지가 현재페이지와 같다면 CSS 강조(차별을 둠)
-        str.append("<li class='page-item active'><A class='page-link'>"+i+"</span>"); // 현재 페이지, 강조
+        str.append("<li class='page-item active'><A class='page-link'>"+i+"</li>"); // 현재 페이지, 강조
       }else{
         // 현재 페이지가 아닌 페이지는 이동이 가능하도록 링크를 설정
         str.append("<li class='page-item'><a class='page-link' href='" + list_file + "?word=" + word + "&type=" + type + "&now_page=" + i + "'>" + i + "</a></li>");

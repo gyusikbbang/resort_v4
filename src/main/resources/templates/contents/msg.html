@@ -6,13 +6,24 @@
   <div class="message">
     <fieldset class="fieldset_basic">
       <ul>
+        <div style="display: flex; justify-content: center">
         <li th:switch="${code}" class="li_none">
-          <div th:case="check_upload_file_fail">
+          <div th:case="check_upload_file_fail" class="alert alert-danger" role="alert">
             <span class="span_fail">등록 할 수 없는 파일 형식입니다</span><br/>
 
           </div>
 
         </li>
+        </div>
+        <div style="display: flex; justify-content: center">
+        <li th:switch="${code}" class="li_none" >
+          <div th:case="passwd_fail" style="width: 300px; text-align: center;" class="alert alert-danger" role="alert">
+            <span class="span_fail">패스워드 오류</span><br/>
+
+          </div>
+
+        </li>
+        </div>
 
         <div style="display: flex; justify-content: center">
           <li class="li_none">
@@ -24,9 +35,9 @@
                 다시 시도
               </button>
             </div>
-            <div th:if="${cnt != 0}">
+            <div th:if="${cnt != '0'}" >
               <button type="button"
-                      onclick="location.href='./list_all'"
+                      onclick="location.href='./search'"
                       class="btn btn-secondary btn-sm">
                 전체 목록
               </button>

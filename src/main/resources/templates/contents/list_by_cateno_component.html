@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-
 <html layout:decorate="~{layout}"> <!-- layout.html 상속-->
- <!-- layout.html 상속-->
-<div layout:fragment="content">
+<div th:fragment="list_by_cateno">
 
 
+  <div class='title_line'>
+    <span th:if="${cateno == 0}" class="title_line_text">전체 글 조회</span>
+    <span th:if="${cateVO.name !=null}" th:text="${cateVO.name}" class="title_line_text"></span>
+    > <span th:if="${cateVO.namesub !=null}" th:text="@{|${cateVO.namesub} >  글 리스트|}"class="title_line_text"> </span>
+  </div>
 
   <aside class="aside_right">
+    <a  th:if="${cateno != 0} and ${session.grade=='admin'}"  th:text="@{|글 등록|}" th:href="@{|/contents/create?cateno=${cateVO.cateno}|}"></a>
+
+    <span class="menu_divide">|</span>
     <a href="javascript:location.reload();">새로고침</a>
   </aside>
 

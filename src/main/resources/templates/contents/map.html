@@ -1,0 +1,71 @@
+
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    <span th:if="${cateno == 0}" class="title_line_text">전체 글 등록</span>
+    <span th:if="${cateVO.name !=null}" th:text="${cateVO.name}" class="title_line_text"></span>
+    > <span th:if="${cateVO.namesub !=null}" th:text="@{|${cateVO.namesub} >  지도 생성|}" class="title_line_text"></span>
+
+  </div>
+<aside class="aside_right">
+  <A href="javascript:location.reload();">새로고침</A>
+  <span class='menu_divide' >│</span>
+  <A href="./list_by_cateno.do?cateno=${param.cateno }&now_page=${param.now_page == null ? 1 : param.now_page}&word=${param.word }">기본 목록형</A>
+  <span class='menu_divide' >│</span>
+  <A href="./list_by_cateno_grid.do?cateno=${param.cateno }&now_page=${param.now_page == null ? 1 : param.now_page}&word=${param.word }">갤러리형</A>
+
+</aside>
+  <div th:replace="~{contents/search_form::search_fragment}"></div>
+
+<!--<DIV style="text-align: right; clear: both;">-->
+<!--&lt;!&ndash;  <form name='frm' id='frm' method='get' action='./list_by_cateno.do'>&ndash;&gt;-->
+<!--&lt;!&ndash;    <input type='hidden' name='cateno' value='${cateVO.cateno }'>  <%&#45;&#45; 게시판의 구분 &#45;&#45;%>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <c:choose>&ndash;&gt;-->
+<!--&lt;!&ndash;      <c:when test="${param.word != '' }"> <%&#45;&#45; 검색하는 경우 &#45;&#45;%>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input type='text' name='word' id='word' value='${param.word }' class='input_word'>&ndash;&gt;-->
+<!--&lt;!&ndash;      </c:when>&ndash;&gt;-->
+<!--&lt;!&ndash;      <c:otherwise> <%&#45;&#45; 검색하지 않는 경우 &#45;&#45;%>&ndash;&gt;-->
+<!--&lt;!&ndash;        <input type='text' name='word' id='word' value='' class='input_word'>&ndash;&gt;-->
+<!--&lt;!&ndash;      </c:otherwise>&ndash;&gt;-->
+<!--&lt;!&ndash;    </c:choose>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button type='submit' class='btn btn-secondary btn-sm'>검색</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    <c:if test="${param.word.length() > 0 }">&ndash;&gt;-->
+<!--&lt;!&ndash;      <button type='button' class='btn btn-secondary btn-sm'&ndash;&gt;-->
+<!--&lt;!&ndash;              onclick="location.href='./list_by_cateno.do?cateno=${cateVO.cateno}&word='">검색 취소</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    </c:if>&ndash;&gt;-->
+<!--&lt;!&ndash;  </form>&ndash;&gt;-->
+<!--</DIV>-->
+
+<DIV class='menu_line'></DIV>
+
+<FORM name='frm_map' method='post' action='./map'>
+  <input type="hidden" name="contentsno" th:value="${param.contentsno }">
+
+  <div>
+    <label>지도 스크립트</label>
+    <textarea name='map' th:value="${contentsVO.map}"class="form-control" rows="12" style='width: 100%;'></textarea>
+  </div>
+  <div  style="text-align: center;" class="content_body_bottom">
+    <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+    <button type="button" onclick="frm_map.map.value=''; frm_map.submit();" class="btn btn-secondary btn-sm">지도 삭제</button>
+    <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+  </div>
+
+</FORM>
+
+<HR>
+<DIV style="text-align: center;">
+  <H4>[참고] 다음 지도의 등록 방법</H4>
+  <IMG src='/contents/images/map01.jpg' style='width: 60%;'><br><br>
+  <IMG src='/contents/images/map02.jpg' style='width: 60%;'><br><br>
+  <IMG src='/contents/images/map03.jpg' style='width: 60%;'><br><br>
+  <IMG src='/contents/images/map04.jpg' style='width: 60%;'><br><br>
+  <IMG src='/contents/images/map05.jpg' style='width: 60%;'><br>
+</DIV>
+</div>
+</html>
+

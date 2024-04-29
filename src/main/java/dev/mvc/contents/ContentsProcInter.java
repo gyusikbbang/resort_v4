@@ -83,7 +83,7 @@ public interface ContentsProcInter {
    * @param search_count 검색 레코드수
    * @return 페이징 생성 문자열
    */
-  public String pagingBox(int cateno, int now_page, String word, String list_file, int search_count);
+  public String pagingBox(int cateno, int now_page, String word, String list_file, int search_count, int record_per_page, int page_per_block);
 
   /**
    * 패스워드 검사

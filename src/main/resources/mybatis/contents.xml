@@ -14,7 +14,7 @@
     <!-- 모든 카테고리의 등록된 글목록 -->
     <select id="list_all" resultType="dev.mvc.contents.ContentsVO">
         SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, passwd, word, rdate,
-               file1, file1saved, thumb1, size1
+               LOWER(file1) as file1, file1saved, thumb1, size1
         FROM contents
         ORDER BY contentsno DESC
     </select>
@@ -22,7 +22,7 @@
     <!-- 특정 카테고리의 등록된 글목록 -->
     <select id="list_by_cateno" resultType="dev.mvc.contents.ContentsVO" parameterType="int">
         SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, rdate,
-               file1, file1saved, thumb1, size1
+               LOWER(file1) as file1, file1saved, thumb1, size1
         FROM contents
         WHERE cateno = #{cateno}
         ORDER BY contentsno DESC
@@ -31,7 +31,7 @@
     <!-- 일반적인 조회 -->
     <select id="read" resultType="dev.mvc.contents.ContentsVO" parameterType="int">
         SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, passwd, word, rdate,
-               file1, file1saved, thumb1, size1, map, youtube
+               LOWER(file1) as file1, file1saved, thumb1, size1, map, youtube
         FROM contents
         WHERE contentsno = #{contentsno}
     </select>
@@ -50,67 +50,77 @@
         UPDATE contents SET youtube=#{youtube} WHERE contentsno=#{contentsno}
     </update>
 
-    <!-- 카테고리별 검색 목록 -->
-    <select id="list_by_cateno_search" resultType="dev.mvc.contents.ContentsVO" parameterType="HashMap">
-        SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, word, rdate,
-        file1, file1saved, thumb1, size1, map, youtube
-        FROM contents
-        <choose>
-            <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 -->
-                WHERE cateno=#{cateno}
-            </when>
-            <otherwise> <!-- 검색하는 경우 -->
-                WHERE cateno=#{cateno} AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%'
-                OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%'
-                OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
-            </otherwise>
-        </choose>
-        ORDER BY contentsno DESC
-    </select>
-
     <!-- 카테고리별 검색 레코드 갯수 -->
+
     <select id="search_count" resultType="int" parameterType="HashMap">
         SELECT COUNT(*) as cnt
         FROM contents
         <choose>
-            <when test="word == null or word == ''"> <!-- 검색하지 않는 경우의 레코드 갯수 -->
-                WHERE cateno=#{cateno}
+            <!-- cateno와 word 모두 비어있는 경우 -->
+            <when test="(cateno == null or cateno == '' or cateno == 0) and (word == null or word == '')">
+                <!-- 모든 레코드를 카운트 -->
             </when>
-            <otherwise> <!-- 검색하는 경우의 레코드 갯수 -->
+            <!-- cateno만 값이 있고 word가 비어있는 경우 -->
+            <when test="(cateno != null and cateno != 0) and (word == null or word == '')">
+                WHERE cateno=#{cateno} <!-- cateno에 대한 필터링만 수행 -->
+            </when>
+            <!-- cateno와 word 모두 값이 있는 경우 -->
+            <when test="(cateno != null and cateno != 0) and (word != null and word != '')">
                 WHERE cateno=#{cateno} AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%'
                 OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%'
-                OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
+                OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%') <!-- cateno와 word에 대한 검색 수행 -->
+            </when>
+            <!-- cateno가 0이면서 word가 비어있지 않은 경우 -->
+            <otherwise>
+                WHERE UPPER(title) LIKE '%' || UPPER(#{word}) || '%'
+                OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%'
+                OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%' <!-- word에 대한 검색만 수행 -->
             </otherwise>
         </choose>
     </select>
 
+
+
+
     <!-- 카테고리별 검색 + 페이징 목록 -->
     <select id="list_by_cateno_search_paging" resultType="dev.mvc.contents.ContentsVO" parameterType="dev.mvc.contents.ContentsVO">
-        SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube, r
+        SELECT *
         FROM (
-        SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube, rownum as r
+        SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube, ROWNUM as r
         FROM (
         SELECT contentsno, memberno, cateno, title, content, recom, cnt, replycnt, rdate, file1, file1saved, thumb1, size1, map, youtube
         FROM contents
         <choose>
-            <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 -->
-                WHERE cateno=#{cateno}
+            <when test="(cateno == null or cateno == '' or cateno == 0) and (word == null or word == '')">
+                <!-- 전체 결과를 가져오는 쿼리 -->
+                ORDER BY contentsno ASC
+            </when>
+            <when test="(cateno != null and cateno != 0) and (word == null or word == '')">
+                <!-- cateno 기준으로 전체 리스트 출력 -->
+                WHERE cateno = #{cateno}
+                ORDER BY contentsno ASC
+            </when>
+            <when test="(cateno == 0) and (word != null and word != '')">
+                <!-- word로 검색 -->
+                WHERE UPPER(title) LIKE '%' || UPPER(#{word}) || '%'
+                OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%'
+                OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%'
+                ORDER BY contentsno ASC
             </when>
             <otherwise>
-                WHERE cateno=#{cateno} AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%'
+                <!-- cateno 기준으로 word로 검색 -->
+                WHERE cateno = #{cateno}
+                AND (UPPER(title) LIKE '%' || UPPER(#{word}) || '%'
                 OR UPPER(content) LIKE '%' || UPPER(#{word}) || '%'
                 OR UPPER(word) LIKE '%' || UPPER(#{word}) || '%')
+                ORDER BY contentsno ASC
             </otherwise>
         </choose>
-        ORDER BY contentsno DESC
         )
         )
-        WHERE <![CDATA[ r >= #{start_num} AND r <= #{end_num} ]]>
-
-        <!-- 1 page: WHERE r >= 1 AND r <= 10;
-              2 page: WHERE r >= 11 AND r <= 20;
-              3 page: WHERE r >= 21 AND r <= 30; -->
+        WHERE r BETWEEN #{start_num} AND #{end_num}
     </select>
+
 
     <!-- 패스워드 검사 -->
     <select id="password_check" resultType="int" parameterType="HashMap">

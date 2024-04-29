@@ -117,7 +117,7 @@ public interface CateDAOInter {
    */
   public ArrayList<CateVO>  list_namesub_y(String name);
 
-
+  public ArrayList<CateVO> list_namesub();
   /**
    * 기능 : 소분류, 중분류 , 소분류 + 중분류 기준으로 검색
    * 매개변수 search 넣을 내용, start_num ,end_num ,

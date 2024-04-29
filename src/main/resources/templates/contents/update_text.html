@@ -1,0 +1,60 @@
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<!-- layout.html 상속-->
+<div layout:fragment="content">
+
+
+
+
+<DIV class='title_line' th:text="@{|${cateVO.name } > ${contentsVO.title } > 수정|}"> </DIV>
+
+<aside class="aside_right">
+  <a href="./create.do?cateno=${cateno }">등록</a>
+  <span class='menu_divide' >│</span>
+  <a href="javascript:location.reload();">새로고침</a>
+  <span class='menu_divide' >│</span>
+  <a href="./list_by_cateno.do?cateno=${cateno }&now_page=${param.now_page}&word=${param.word }">목록형</a>
+  <span class='menu_divide' >│</span>
+  <a href="./list_by_cateno_grid.do?cateno=${cateno }&now_page=${param.now_page}&word=${param.word }">갤러리형</a>
+</aside>
+
+  <div th:replace="~{contents/search_form::search_fragment}"></div>
+
+<div class='menu_line'></div>
+
+<form name='frm' method='post' action='./update_text'>
+  <input type="hidden" name="cateno" th:value="${cateno}">
+  <input type="hidden" name="contentsno" th:value="${contentsVO.contentsno}">
+  <input type="hidden" name="now_page" th:value="${now_page}">
+  <input type="hidden" name="search_word" th:value="${word}">
+
+  <div>
+    <label>제목</label>
+    <input type='text' name='title' th:value='${contentsVO.title}' required="required"
+           autofocus="autofocus" class="form-control" style='width: 100%;'>
+  </div>
+  <div>
+    <label>내용</label>
+    <textarea name='content' th:text="${contentsVO.content}" required="required" class="form-control" rows="12" style='width: 100%;'></textarea>
+  </div>
+  <div>
+    <label>검색어</label>
+    <input type='text' name='word' th:value="${contentsVO.word}" required="required"
+           class="form-control" style='width: 100%;'>
+  </div>
+
+  <div>
+    <label>패스워드</label>
+    <input type='password' name='passwd' value='' required="required"
+           class="form-control" style='width: 50%;'>
+  </div>
+
+  <div class="content_body_bottom">
+    <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+    <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+  </div>
+
+</FORM>
+
+
+</div>
+</html>

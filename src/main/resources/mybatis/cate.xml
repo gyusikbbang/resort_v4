@@ -143,6 +143,13 @@
         ORDER BY seqno ASC
     </select>
 
+    <select id="list_namesub" resultType="dev.mvc.cate.CateVO">
+        SELECT cateno, namesub,name
+        FROM cate
+        WHERE namesub != '-' AND visible = 'Y'
+        ORDER BY seqno ASC
+    </select>
+
 <!--    <select id="list_search" parameterType="java.util.Map" resultType="dev.mvc.cate.CateVO">-->
 <!--        &lt;!&ndash; 중분류 조회 &ndash;&gt;-->
 <!--        <if test="type.equals('100')">-->

@@ -62,7 +62,7 @@ public class Tool {
       if (file.endsWith("jpg") || file.endsWith(".jpeg") || file.endsWith(".png") || file.endsWith("gif")
           || file.endsWith("txt") || file.endsWith("hwp") || file.endsWith("xls") || file.endsWith("xlsx")
           || file.endsWith("ppt") || file.endsWith("pptx") || file.endsWith("zip") || file.endsWith("tar")
-          || file.endsWith("gz") || file.endsWith("ipynb") || file.endsWith("doc") || file.endsWith("sql")) {
+          || file.endsWith("gz") || file.endsWith("ipynb") || file.endsWith("doc") || file.endsWith("sql") || file.endsWith("mp3") || file.endsWith("mp4")) {
         sw = true;
       }
     }
@@ -174,7 +174,7 @@ public class Tool {
         // 파일에 기록
         ImageIO.write(destImg, "jpg", dest);
 
-        System.out.println(dest.getName() + " 이미지를 생성했습니다.");
+
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -277,7 +277,7 @@ public class Tool {
    * @param request
    * @param dir 절대 경로를 구할 폴더명
    * @return 절대 경로 리턴
-   * @throws IOException
+//   * @throws IOException
    */
   public static synchronized String getRealPath(HttpServletRequest request, String dir) {
     String path = "";
@@ -411,7 +411,12 @@ public class Tool {
    * @return
    */
   public static synchronized String youtubeResize(String url, int resizeWidth) {
+
+    url = url.trim();
     String[] tokens = url.split(" "); // 공백으로 문자열 분리
+
+
+
 
     // 정수 추출
     int width = Integer.parseInt(tokens[1].replaceAll("[^0-9]", ""));
@@ -429,11 +434,21 @@ public class Tool {
     // 문자열 결합
     StringBuffer sb = new StringBuffer();
     for(String token : tokens) {
-      sb.append(" " + token);
+      if (token.equals(tokens[0])) {
+        sb.append(token);
+      } else {
+        sb.append(" " + token);
+      }
+
+
     }
+
+
 
     return sb.toString();
   }
+
+
   public static synchronized String wordcheckNull(Object obj) {
     if (obj == null || obj.equals("null") || obj.toString().trim().isEmpty()) {
       return "";

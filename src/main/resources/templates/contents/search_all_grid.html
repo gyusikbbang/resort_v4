@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div th:if="${down != null}" class="alert alert-warning" role="alert">
+    <span th:text="${down}"></span>
+  </div>
+
+  <div th:if="${up != null}" class="alert alert-warning" role="alert">
+    <span th:text="${up}"></span>
+  </div>
+
+
+  <div th:if="${hide != null}" class="alert alert-warning" role="alert">
+    <span th:text="${hide}"></span>
+  </div>
+
+  <div th:if="${show != null}" class="alert alert-warning" role="alert">
+    <span th:text="${show}"></span>
+  </div>
+  <div th:if="${search != null}" class="alert alert-success" role="alert">
+    <span th:text="${search}"></span>
+  </div>
+
+  <div th:if="${nulllist != null}" class="alert alert-warning" role="alert">
+    <span th:text="${nulllist}"></span>
+  </div>
+
+  <div th:if="${delete != null}" class="alert alert-danger" role="alert">
+    <span th:text="${delete}"></span>
+  </div>
+
+
+
+
+
+
+  <!-- /cate/list_all_compoent.html 파일의 list_all_fragment import -->
+  <div th:replace="~{contents/search_all_component_grid::search_all_fragment_grid}"></div>
+
+
+
+</div>
+
+</html>

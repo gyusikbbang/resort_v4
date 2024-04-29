@@ -1,0 +1,16 @@
+<div th:fragment="search_fragment">
+  <div style="text-align: right; clear:both;">
+    <form name="frm_search" th:action="@{/contents/search_grid}">
+
+      <input type="text" name="word" id="word" th:value="${word}">
+      <input type="hidden" name="cateno" th:value="${cateno}">
+      <button type='submit' class='btn btn-secondary btn-sm' style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">
+        검색
+      </button>
+      <span th:if="${search != null || nulllist != null}">
+        <button type='button' onclick="location.href='/contents/search_grid'" class='btn btn-secondary btn-sm'
+                style="padding: 2px 8px 3px 8px; margin: 0px 0px 2px 0px;">검색 취소</button>
+      </span>
+    </form>
+  </div>
+</div>

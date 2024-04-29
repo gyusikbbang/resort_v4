@@ -1,6 +1,6 @@
 <div th:fragment="navbarFragment">
   <div class="top_menu_img">
-    <div class="top_menu_label">생존 오지 오버랜딩 ver 2.0</div>
+    <div class="top_menu_label">생존 오지 오버랜딩 ver 4.0</div>
   </div>
   <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
     <div class="container-fluid">
@@ -16,10 +16,10 @@
                data-bs-toggle="dropdown" aria-expanded="false" th:text="${Menu.name}">메뉴 1</a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <li th:each="cateVO : ${Menu.listnamesub}">
-                <a class="dropdown-item" th:text="@{|${cateVO.namesub} 글 등록|}" th:href="@{|/contents/create?cateno=${cateVO.cateno}|}"></a>
+                <a class="dropdown-item"  th:if="${session.grade=='admin'}" th:text="@{|${cateVO.namesub} 글 등록|}" th:href="@{|/contents/create?cateno=${cateVO.cateno}|}"></a>
 
 
-                <a class="dropdown-item" th:text="@{|${cateVO.namesub} 글 조회|}"  th:href="@{|/contents/list_by_cateno?cateno=${cateVO.cateno}|}"></a>
+                <a class="dropdown-item" th:text="@{|${cateVO.namesub} 글 조회|}"  th:href="@{|/contents/search?cateno=${cateVO.cateno}|}"></a>
               </li>
             </ul>
           </li>
@@ -68,8 +68,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="/contents/create">컨텐츠 등록</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/contents/list_all">컨텐츠 조회</a>
+              <li class="nav-item" >
+                <a class="nav-link" href="/contents/search">컨텐츠 조회</a>
+
               </li>
             </ul>
           </li>

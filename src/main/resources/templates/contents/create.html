@@ -5,7 +5,8 @@
 
   <div th:each="cateVO : ${cateVO}" >
 
-  <div class='title_line'><span style="font-size: 20px;" th:text="@{|${cateVO.namesub} > 글등록 |}"></span></div>
+  <div  th:if="${cateVO.namesub == null}" class='title_line'><span  style="font-size: 20px;"  th:text="@{|전체  > 글등록 |}"></span></div>
+    <div   th:if="${cateVO.namesub != null}" class='title_line'><span style="font-size: 20px;"  th:text="@{|${cateVO.namesub} > 글등록 |}"></span></div>
 
   <aside class="aside_right">
     <a th:href="@{|./create?cateno=${cateVO.cateno}|}">등록</a>
@@ -22,7 +23,57 @@
   <div class='menu_line'></div>
 
   <form name='frm' method='post' action='./create' enctype="multipart/form-data">
-    <input type="text" name="cateno" th:value="${cateno}"  >
+    <input type="hidden"  th:if="${cateno != 0}" name="cateno" th:value="${cateno}"  >
+    <select th:if="${cateno == 0 }" id="categorySelect" name="category" onchange="changeSubCategory(this)">
+      <option value="">카테고리 선택</option>
+      <!-- Thymeleaf 반복문 사용 -->
+      <option th:each="category : ${catelist}"
+              th:value="${category.name}"
+              th:data-cateno="${category.cateno}" th:text="${category.name}">
+      </option>
+    </select>
+
+    <!-- 두 번째 셀렉트 박스 -->
+    <select th:if="${cateno == 0 }"  id="subCategorySelect" name="cateno">
+      <option value="">하위 카테고리 선택</option>
+    </select>
+
+    <script th:inline="javascript" >
+      // 하위 카테고리 셀렉트 박스 값 변경 시 실행되는 함수
+      function changeSubCategory() {
+        var selectElement = document.getElementById("categorySelect");
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+        var selectedValue = selectedOption.value;
+        var selectedCateno = selectedOption.getAttribute("data-cateno"); // 데이터 속성에서 cateno 가져오기
+
+        // 서버로부터 하위 카테고리 리스트 가져오는 요청을 보냄
+        if (selectedCateno !== "0") { // cateno가 0이 아닌 경우에만 요청 보냄
+          fetch("/contents/getSubCategories?name=" + encodeURIComponent(selectedValue)) // encodeURIComponent를 사용하여 URL 파라미터 인코딩
+            .then(response => response.json())
+            .then(data => {
+              // 기존의 하위 카테고리 리스트를 초기화
+              var subCategorySelect = document.getElementById("subCategorySelect");
+              subCategorySelect.innerHTML = "";
+
+              // 새로운 하위 카테고리 리스트 추가
+              data.forEach(subCategory => {
+                var option = document.createElement("option");
+                option.value = subCategory.cateno;
+                option.text = subCategory.namesub;
+                subCategorySelect.appendChild(option);
+              });
+            });
+        } else { // cateno가 0이면 두 번째 셀렉트 박스를 비활성화
+          var subCategorySelect = document.getElementById("subCategorySelect");
+          subCategorySelect.innerHTML = ""; // 기존 옵션 제거
+          var disabledOption = document.createElement("option");
+          disabledOption.value = "";
+          disabledOption.text = "하위 카테고리 선택";
+          disabledOption.disabled = true; // 비활성화
+          subCategorySelect.appendChild(disabledOption);
+        }
+      }
+    </script>
 
     <div>
       <label>제목</label>
